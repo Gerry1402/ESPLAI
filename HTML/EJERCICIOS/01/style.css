@@ -190,7 +190,7 @@ body {
     text-align: center;
 }
   
-img:hover .nombre, img:hover .explicacion {
+.imagen:hover .nombre, .imagen:hover .explicacion {
     opacity: 1; /* Muestra el texto al pasar el ratón por encima del contenedor */
 }
 
