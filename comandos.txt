@@ -1,0 +1,10 @@
+CMD
+dir = Muestra archivos y directorios en carpeta
+clr = limpia el Terminal
+code = abre el VS code
+
+VS CODE
+Ctrl + J = Abrir Terminal de Code
+Ctrl + Shift + P = Configuraciones varias de VS Code
+Ctrl + B = Ocultar barra lateral
+Ctrl + S = Gurdar
