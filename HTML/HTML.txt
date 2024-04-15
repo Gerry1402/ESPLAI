@@ -1,0 +1,6 @@
+En la linia "<!DOCTYPE html>" no hace falta especificar la versi'on de html
+En el apartado "<head>" se pone informaci'on del archivo
+El contenido del archivo se encuentra en "<body>"
+Para títulos, se utiliza h1, h2, h3... siendo h1 el título principal
+cerrar los apartados con el símbolo "/"
+Los emojis son como car'acteres del "abecedario" utf-8. Se copia tal cual
