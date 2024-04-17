@@ -8,3 +8,7 @@ Ctrl + J = Abrir Terminal de Code
 Ctrl + Shift + P = Configuraciones varias de VS Code
 Ctrl + B = Ocultar barra lateral
 Ctrl + S = Gurdar
+
+HTML
+para empezar, escribe un "!"
+para escribir rápido, puedes escribir "ul>li*3>a.casilla"
