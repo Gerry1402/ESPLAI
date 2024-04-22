@@ -18,6 +18,6 @@ for i in range (1,5):
     palo=input('Seleccionar '+', '.join(Palos)+'\n')
     Mesa.append([numero, palo])
 
-#Hola
+#Holaa
 ## ESCOBA ##
 
