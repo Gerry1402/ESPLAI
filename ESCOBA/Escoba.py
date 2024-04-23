@@ -53,7 +53,7 @@ def comprobar_mesa(Mesa):
             Mesa=[]
     return Mesa
 
-def comprobar_tirada(Persona,Mesa):
+def comprobar_tirada(Persona):
     Opciones=[]
     Cartas_mano=Cartas_jugadores[Persona]
     for combinacion in combinaciones(Mesa):
@@ -68,25 +68,41 @@ def comprobar_tirada(Persona,Mesa):
                 Opciones.append(carta+' + '+' + '.join(combinacion))
     return Opciones
 
-#Holaa
-## ESCOBA ##
+def calificar_opciones(Opciones):
+    Calificaciones={}
+    for opcion in Opciones:
+        Calificaciones[opcion]=[]
+        cartas=opcion.split(' + ')
+        if len(cartas)==len(Mesa)+1:
+            Calificaciones[opcion].append('Escoba')
+        if '7 de oros' in cartas:
+            Calificaciones[opcion].append('Velo')
+            
+        
+        
+
+
+
 Numeros=['As','2','3','4','5','6','7','Sota','Caballo','Rey']
 Palos=['oro','copa','espada','basto']
 Equivalencias={'As':'1','Sota':'8','Caballo':'9','Rey':'10'}
-Equivalencias_inversas={}
-for clave in Equivalencias.keys():
-    Equivalencias_inversas[Equivalencias[clave]]=clave
-Baraja, Restantes=Baraja_Cartas (Numeros, Palos,Equivalencias)
-Mesa=Repartir_Mesa(Restantes,4)
-print('Mesa: ',Mesa)
-Mesa=comprobar_mesa(Mesa)
-print('Mesa: ',Mesa)
+Numero_cartas_jugador=3
+Numero_cartas_mesa=4
 Jugadores={'Gerard':[],'Fantasma':[], 'Casper':[], 'Fantasmilla':[]}
+Orden_Tiradas=['Gerard','Fantasma','Casper','Fantasmilla']
+Baraja, Restantes=Baraja_Cartas (Numeros, Palos,Equivalencias)
+Mesa=Repartir_Mesa(Restantes,Numero_cartas_mesa)
+Mesa=comprobar_mesa(Mesa)
+print('Mesa: '+', '.join(Mesa))
 Cartas_jugadores=Jugadores
-Orden_Tiradas=['Jugador','Fantasma','Casper','Fantasmilla']
-for jugador in Cartas_jugadores.keys():
-    Cartas_jugadores[jugador]=Repartir_Jugador(Restantes,3)
-    print (jugador+': ',Cartas_jugadores[jugador])
-#while len(Restantes)>0:
-Opciones_Jugador=comprobar_tirada('Gerard',Mesa)
-print(Opciones_Jugador)
+Rondas=range(1,((len(Baraja)-Numero_cartas_mesa)/(Numero_cartas_jugador*len(Jugadores))+1)//1)
+for ronda in Rondas:
+    for jugador in Cartas_jugadores.keys():
+        Cartas_jugadores[jugador]=Repartir_Jugador(Restantes,Numero_cartas_jugador)
+        print (jugador+': '+', '.join(Cartas_jugadores[jugador]))
+    for turno in range(1,Numero_cartas_jugador+1):
+        for jugador in Orden_Tiradas:
+            Opciones_Recoger_Jugador=comprobar_tirada(jugador)
+            
+
+print(Opciones_Recoger_Jugador)
