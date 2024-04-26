@@ -1,6 +1,6 @@
 import random
 
-# Crear una nueva baraja española
+### Crear una nueva baraja española ###
 
 Palos = ['Oro', 'Copa', 'Espada', 'Basto']
 Numeros = list(range(1, 11))
@@ -22,10 +22,10 @@ class baraja:
         for palo in Palos:
             for valor in Numeros:
                 self.cartas.append(Carta(valor, palo))
-    
+
     def barajar(self):
         random.shuffle(self.cartas)
-    
+
     def repartir(self, cantidad):
         if cantidad > len(self.cartas):
             raise ValueError("No hay suficientes cartas en la baraja")
@@ -35,27 +35,20 @@ class baraja:
     def __len__(self):
         return len(Palos)*len(Numeros)+Jokers
 
-# Crear una nueva baraja española
 Baraja = baraja()
-
-# Barajar las cartas
 Baraja.barajar()
-
-Mesa=Baraja.repartir(4)
 
 ### Crear Jugadores ###
 
 Jugadores = {}
 Turnos=['Gerard', 'Fantasma', 'Casper', 'Fantasmilla']
-for jugador in Turnos:
-    Jugadores[jugador]=0
 
 class Jugador:
     def __init__(self, nombre):
         self.nombre = nombre
         self.mano = []
         self.cartas = []
-        self.por = []
+        self.conocidas = []
         self.escobas = 0
         self.oros = 0
         self.sietes = 0
@@ -65,22 +58,18 @@ class Jugador:
     def __repr__(self) -> str:
         pass
 
-    def recibir_cartas(self, numero):
+    def recibir(self, numero):
         self.mano=Baraja.repartir(numero)
         for carta in self.mano:
-            if carta not in self.cartas:
-                self.cartas.append(carta)
+            if carta not in self.conocidas:
                 self.conocidas.append(carta)
 
-    def descartar_carta(self, carta):
+    def descartar(self, carta):
         if carta in self.mano:
             self.mano.remove(carta)
             Mesa.append(carta)
-            for jugador in Jugadores.keys():
-                if carta not in Jugadores[jugador].conocidas:
-                    Jugadores[jugador].conocidas.append(carta)
 
-    def recoger_cartas(self, cartas):
+    def recoger(self, cartas):
         for carta in cartas:
             if carta.valor == 7:
                 self.sietes += 1
@@ -95,9 +84,6 @@ class Jugador:
             if carta in Mesa:
                 Mesa.remove(carta)
                 self.cartas.append(carta)
-            for jugador in Jugadores.keys():
-                if carta not in Jugadores[jugador].conocidas:
-                    Jugadores[jugador].conocidas.append(carta)
 
     def __str__(self):
         return f" - {self.nombre} - \nCartas en mano: {self.mano}\nCartas: {self.cartas}\nCartas conocidas: {self.cartas}\nContador: (Escobas: {self.escobas}, Cartas: {self.numero_cartas}, Sietes: {self.sietes}, Oros: {self.oros}, Velo: {self.velo})"
@@ -105,12 +91,13 @@ class Jugador:
 for jugador in Turnos:
     Jugadores[jugador]=Jugador(jugador)
 
-print (len(Baraja))
-Jugadores['Gerard'].recibir_cartas(3)
+print (len(Baraja.cartas))
+Mesa=Baraja.repartir(4)
+Jugadores['Gerard'].recibir(3)
 print (Jugadores['Gerard'].mano)
-Jugadores['Gerard'].descartar_carta(Jugadores['Gerard'].mano[0])
+Jugadores['Gerard'].descartar(Jugadores['Gerard'].mano[0])
 print (Jugadores['Gerard'].mano)
 print (Mesa)
-Jugadores['Gerard'].recoger_cartas(Mesa[:2]+[Jugadores['Gerard'].mano[0]])
+Jugadores['Gerard'].recoger(Mesa[:2]+[Jugadores['Gerard'].mano[0]])
 print (Jugadores['Gerard'])
 print (Jugadores['Fantasma'])
