@@ -1,0 +1,13 @@
+Opcion directa
+    Velo
+    Escoba
+    Sietes (Cuantos mas mejor)
+
+Depende
+    Oros: Si se supera en el contador los minimos para ganar
+    Cartas: Si se supera en el contador los minimos para ganar
+
+
+Optar a otra:
+    Si deja opcion a 7 o Escoba (80%)
+
