@@ -67,9 +67,9 @@ def calificar_opciones(Persona):
 
 def escoger_opcion(Persona):
     resultado={'Velo': [], 'Escoba': [], 'Sietes': [],'Oros': [], 'Cartas': [], '-4': [], '+15': []}
+    Sietes=1
     Oros=1
     Cartas=1
-    Sietes=1
     opciones=comprobar_tirada(Persona)
     calificaciones=calificar_opciones(Persona)
     for i, calificacion in enumerate(calificaciones):
@@ -104,9 +104,9 @@ def escoger_opcion(Persona):
             sietes.append(Jugadores[jugador].sietes)
             oros.append(Jugadores[jugador].oros) 
             cartas.append(Jugadores[jugador].cartas)
-    Sietes = 4 - sum(sietes) >= max(sietes) - Jugadores[Persona].sietes and Jugadores[Persona].sietes < 2
-    Oros = 10 - sum(oros) >= max(oros) - Jugadores[Persona].oros and Jugadores[Persona].oros < 5
-    Cartas = 40 - sum(cartas) >= max(cartas) - Jugadores[Persona].Cartas and Jugadores[Persona].Cartas < 20
+    Sietes = 4 - sum(sietes) >= max(sietes) - Jugadores[Persona].sietes and Jugadores[Persona].sietes <= 2
+    Oros = 10 - sum(oros) >= max(oros) - Jugadores[Persona].oros and Jugadores[Persona].oros <= 5
+    Cartas = 40 - sum(cartas) >= max(cartas) - Jugadores[Persona].Cartas and Jugadores[Persona].Cartas <= 20
     return resultado
 
 for jugador in Orden:
