@@ -13,4 +13,3 @@ class mesa:
         return f"{self.cartas}"
 
 Mesa=mesa()
-Mesa.repartir(4)

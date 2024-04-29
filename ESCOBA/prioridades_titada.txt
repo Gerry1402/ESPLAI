@@ -3,10 +3,9 @@ Opcion directa
     Escoba
     Sietes (Cuantos mas mejor)
 
-Depende
-    Oros: Si se supera en el contador los minimos para ganar
-    Cartas: Si se supera en el contador los minimos para ganar
-
+Depende (Si aún existen posibilidades o se supera en el contador los minimos para ganar)
+    Oros
+    Cartas
 
 Optar a otra:
     Si deja opcion a 7 o Escoba (80%)

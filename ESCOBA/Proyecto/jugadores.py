@@ -36,6 +36,8 @@ class Jugador:
             Mesa.total.append(carta)
 
     def recoger(self, cartas):
+        if len(cartas) == len (Mesa.cartas) + 1:
+            self.escobas += 1
         try:
             for carta in cartas:
                 if carta.valor == 7:
@@ -62,6 +64,5 @@ numero_jugadores=int(input('Numero de jugadores (en orden): '))
 for i in range(numero_jugadores):
     nombre_jugador=input('Nombre del jugador '+str(i+1)+': ')
     Jugadores[nombre_jugador]=Jugador(nombre_jugador)
-    Jugadores[nombre_jugador].recibir(3)
 
 Orden = list(Jugadores.keys())
