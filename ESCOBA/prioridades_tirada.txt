@@ -9,4 +9,3 @@ Depende (Si aún existen posibilidades o se supera en el contador los minimos pa
 
 Optar a otra:
     Si deja opcion a 7 o Escoba (80%)
-

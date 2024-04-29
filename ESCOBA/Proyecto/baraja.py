@@ -19,7 +19,10 @@ class mazo:
             return [self.cartas.pop() for _ in range(cantidad)]
 
 def etiquetar(cartas):
-    return ', '.join([str(carta) for carta in cartas])
+    if isinstance(cartas, list):
+        return ', '.join([str(carta) for carta in cartas])
+    else:
+        return str(cartas)
 
 Baraja=mazo()
 Baraja.mezclar()

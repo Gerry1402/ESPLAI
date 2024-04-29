@@ -15,6 +15,7 @@ class Jugador:
         self.sietes = 0
         self.numero_cartas = 0
         self.velo = False
+        self.ultimo = False
     
     def conocidas(self, cartas):
         return [carta for carta in self.mano+cartas]
@@ -38,23 +39,20 @@ class Jugador:
     def recoger(self, cartas):
         if len(cartas) == len (Mesa.cartas) + 1:
             self.escobas += 1
-        try:
-            for carta in cartas:
-                if carta.valor == 7:
-                    self.sietes += 1
-                if carta.palo == 'Oro':
-                    self.oros += 1
-                if carta.valor == 7 and carta.palo == 'Oro':
-                    self.velo = True
-                self.numero_cartas += 1
-                self.cartas.append(carta)
-                if carta in self.mano:
-                    self.mano.remove(carta)
-                    Mesa.total.append(carta)
-                if carta in Mesa.cartas:
-                    Mesa.cartas.remove(carta)
-        except:
-            print('No hay opciones a recoger')
+        for carta in cartas:
+            if carta.valor == 7:
+                self.sietes += 1
+            if carta.palo == 'Oro':
+                self.oros += 1
+            if carta.valor == 7 and carta.palo == 'Oro':
+                self.velo = True
+            self.numero_cartas += 1
+            self.cartas.append(carta)
+            if carta in self.mano:
+                self.mano.remove(carta)
+                Mesa.total.append(carta)
+            if carta in Mesa.cartas:
+                Mesa.cartas.remove(carta)
 
     def __str__(self):
         return f" - {self.nombre} - \nCartas en mano: {etiquetar(self.mano)}\nCartas: {etiquetar(self.cartas)}\nCartas conocidas: {etiquetar(self.conocidas)}\nContador: (Escobas: {self.escobas}, Cartas: {self.numero_cartas}, Sietes: {self.sietes}, Oros: {self.oros}, Velo: {self.velo})"
