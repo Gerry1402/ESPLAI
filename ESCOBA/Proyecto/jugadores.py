@@ -16,6 +16,7 @@ class Jugador:
         self.numero_cartas = 0
         self.velo = False
         self.ultimo = False
+        self.contador = 0
     
     def conocidas(self, cartas):
         return [carta for carta in self.mano+cartas]

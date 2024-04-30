@@ -1,5 +1,5 @@
 import jugadores
-from auxiliares import combinaciones, binomio_newton
+from auxiliares import combinaciones, binomio_newton, medio
 from mesa import Mesa
 from jugadores import Jugadores, Orden, numero_jugadores
 from baraja import etiquetar
@@ -103,20 +103,22 @@ def escoger_opcion_recogida(Persona):
             buenas.append([opcion,Puntuacion])
         else:
             if calificacion['4']:
-                cuatro.append([opcion, Puntuacion*1.5])
-            if calificacion['+15']:
-                masquince.append([opcion, Puntuacion])
-            if calificacion['Reescoba'] != False:
+                cuatro.append([opcion, Puntuacion*2])
+            elif calificacion['+15']:
+                masquince.append([opcion, Puntuacion*1.5])
+            elif calificacion['Reescoba'] != False:
                 reescoba.append([opcion, Puntuacion*(1-calificacion['Reescoba'])])
-            if calificacion['Preparada'] != False:
-                preparada.append([opcion, Puntuacion*0.8])
+            elif calificacion['Preparada'] != False:
+                preparada.append([opcion, Puntuacion*1.5])
+            else:
+                preparada.append([opcion, Puntuacion])
     ## lista 'buenas' es la opcion a escoger por defecto, para el resto se ha calculado la rentabilidad ##
     finalista=None
     puntuacion=0
     if len(buenas) > 0:
-        lista=buenas
+        lista = buenas
     else:
-        lista= cuatro + masquince + reescoba + preparada
+        lista = cuatro + masquince + reescoba + preparada
     for opcion in lista:
         if opcion[-1]>puntuacion:
             puntuacion=opcion[-1]
@@ -126,6 +128,8 @@ def escoger_opcion_recogida(Persona):
 def dejar_carta_mesa(Persona):
     resumen = []
     opciones=[]
+    if len(Jugadores[Persona].mano) == 1:
+        return 0
     ## Cualcular el siguiente jugador ##
     for index, persona in enumerate(Orden):
             if persona == Persona:
@@ -143,9 +147,9 @@ def dejar_carta_mesa(Persona):
         for combinacion in combinaciones(Mesa.cartas+[carta]):
             numeros_combinacion_mesa = sum([carta_mesa.valor for carta_mesa in combinacion])
             if numeros_combinacion_mesa < 15 and numeros_combinacion_mesa > 4 and numeros_combinacion_mesa not in reescobas:
-                reescobas.append(numeros_combinacion_mesa)
                 if len(combinacion) == len(Mesa.cartas) + 1:
                     reescobas[0] = True
+                reescobas.append(numeros_combinacion_mesa)
         opciones.append(reescobas)
     for opcion in opciones:
         posibilidades = []
@@ -159,12 +163,15 @@ def dejar_carta_mesa(Persona):
             maximo_probabilidad = max(posibilidades)
             resumen.append([False, maximo_probabilidad])
     posibilidades = 1
+    posibilidades_escoba = 1
     escoba=True
     for index, opcion in enumerate(resumen):
-        if not opcion[0] and opcion[1] > posibilidades:
+        if not opcion[0] and opcion[1] < posibilidades:
             resultado = index
+            posibilidades = opcion[1]
             escoba = False
-        elif escoba:
+        elif escoba and opcion[1] < posibilidades_escoba:
+            posibilidades_escoba = opcion[1]
             resultado = index
     return resultado
 
@@ -181,55 +188,94 @@ def opcion_a_escoger (Persona):
         print (f'{Persona} escoge {etiquetar(escoger_opcion_recogida(Persona))}')
         Jugadores[Persona].recoger(escoger_opcion_recogida(Persona))
 
+def empate_o_no_empate(tipo_puntos):  ## retorna [Valor_maximo, jugadores_con_valor_maximo]
+    resultado = []
+    puntos = {}
+    for jugador in Orden:
+        if tipo_puntos == 'sietes':
+            puntos[jugador] = Jugadores[jugador].sietes
+        elif tipo_puntos == 'oros':
+            puntos[jugador] = Jugadores[jugador].oros
+        elif tipo_puntos == 'cartas':
+            puntos[jugador] = Jugadores[jugador].numero_cartas
+        elif tipo_puntos == 'contador':
+            puntos[jugador] = Jugadores[jugador].contador
+    resultado = [max(puntos.values())]
+    for jugador in Orden:
+        if puntos[jugador] == max(puntos.values()):
+            resultado.append(jugador)
+    return resultado
+
 def calcular_puntuacion():
     contador = {}
-    sietes = {}
-    oros = {}
-    cartas = {}
-    no_empates = {'sietes':True, 'oros':True, 'cartas':True}
     for jugador in Orden:
         contador[jugador] = 0
-        sietes[jugador] = Jugadores[jugador].sietes
-        oros[jugador] = Jugadores[jugador].oros
-        cartas[jugador] = Jugadores[jugador].numero_cartas
+    sietes = empate_o_no_empate('sietes')
+    oros = empate_o_no_empate('oros')
+    cartas = empate_o_no_empate('cartas')
+    velo = ''
     for jugador in Orden:
-        if Jugadores[jugador].sietes == max(sietes.values()):
+        if Jugadores[jugador].sietes == sietes[0] and len(sietes) == 2:
             contador[jugador] += 1
-        if Jugadores[jugador].oros == max(oros.values()):
+        if Jugadores[jugador].oros == oros[0] and len(oros) == 2:
             contador[jugador] += 1
-        if Jugadores[jugador].numero_cartas == max(cartas.values()):
+        if Jugadores[jugador].numero_cartas == cartas[0] and len(cartas) == 2:
             contador[jugador] += 1
         if Jugadores[jugador].velo:
             contador[jugador] += 1
+            velo = jugador
         contador[jugador] += Jugadores[jugador].escobas
+        print (f'{jugador} ha realizado {Jugadores[jugador].escobas} escobas')
+    Ganador = empate_o_no_empate('contador')
+    if len(sietes) > 2:
+        print ('\n' + f'En las setenta hay un empate entre {', '.join(sietes[1:-1])} y {sietes[-1]}' + '\n')
+    else:
+        print ('\n' + f'{sietes[1]} ha ganado las setenta' + '\n')
+    if len(oros) > 2:
+        print (f'En los oros hay un empate entre {', '.join(oros[1:-1])} y {oros[-1]}' + '\n')
+    else:
+        print (f'{oros[1]} ha ganado los oros' + '\n')
+    if len(cartas) > 2:
+        print (f'En las cartas hay un empate entre {', '.join(cartas[1:-1])} y {cartas[-1]}' + '\n')
+    else:
+        print (f'{cartas[1]} ha ganado las cartas' + '\n')
+    print (f'{velo} ha ganado el velo' + '\n')
+    if len(Ganador) > 2:
+        print (medio('GANADORES','-_',100)+'\n')
+        print (medio(f'{', '.join(Ganador[1:-1])} y {Ganador[-1]}',' ',100)+'\n')
+    else:
+        print (medio('GANADOR','-_',100)+'\n')
+        print (medio(f'{', '.join(Ganador[1:-1])} y {Ganador[-1]}',' ',100)+'\n')
+    print ('-_'*50)
 
-
-numero_cartas_mesa=4
+numero_cartas_mesa = 4
 numero_cartas_jugador = 3
 Rondas= list(range(1, int((40-numero_cartas_mesa)/(numero_cartas_jugador*numero_jugadores))+1))
-print (Rondas)
 Mesa.repartir(numero_cartas_mesa)
+print ('*'*100)
 for ronda in Rondas:
     if ronda == Rondas[-1]:
-        print ('RONDA FINAL:')
+        texto = 'RONDA FINAL'
     else:
-        print (f'RONDA {ronda}:')
+        texto = f'RONDA {ronda}'
+    print (medio(texto,'-',100)+'\n')
     for jugador in Orden:
         Jugadores[jugador].recibir(numero_cartas_jugador)
-    print ('----------------------------------------------')
+    print ('-'*100)
     for turno in range(numero_cartas_jugador):
         for jugador in Orden:
             print ('Cartas de la mesa: ',etiquetar(Mesa.cartas))
             print (f'Cartas {jugador}: ', etiquetar(Jugadores[jugador].mano))
             opcion_a_escoger(jugador)
-            print ('- - - - - - - - - - - - - - - - - - - - - - - -')
-            if input('Continuar con la partida? [s/n]: ') == 'n':
-                quit()
+            print ('- '*50)
+            #if input('Continuar con la partida? [s/n]: ') == 'n':
+                #quit()
     if ronda == Rondas[-1]:
-        print ('****************************************')
-        print (f'FIN DE LA PARIDA')
+        print ('*'*100)
+        print (medio('FIN DE LA PARIDA','-',100)+'\n')
         for jugador in Orden:
             if Jugadores[jugador].ultimo:
-                print (f'{jugador} ha sido el último en recoger cartas')
+                print (f'{jugador} ha sido el último en recoger cartas' + '\n')
                 Jugadores[jugador].recoger(Mesa.cartas)
-        
+        print (medio('PUNTUACIÓN','-',100))
+        calcular_puntuacion()

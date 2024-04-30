@@ -16,3 +16,14 @@ def binomio_newton(x, y):
         b = factorial(y)
         div = a // (b * factorial(x - y))
         return div
+
+def medio (string,laterales,ancho):
+    resultado=(list(laterales)*((100 // len(laterales)) + 1))[:ancho]
+    if len(string) == 0:
+        return ''.join(resultado)
+    empezar = (ancho // 2) - (len(string) // 2)
+    resultado[empezar - 1] = ' '
+    resultado[empezar + len(string)] = ' '
+    for i in range(len(string)):
+        resultado[empezar + i] = string[i]
+    return ''.join(resultado)
