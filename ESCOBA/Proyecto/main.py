@@ -242,42 +242,42 @@ def calcular_puntuacion():
             print ('\n' + f'{tríada[tanto][1]} ha ganado {tanto}')
     print ('\n' + f'{velo} ha ganado el velo' + '\n')
     if len(Ganador) > 2:
-        print (medio('GANADORES','-_',100) + '\n')
-        print (medio(f'{', '.join(Ganador[1:-1])} y {Ganador[-1]}',' ',100) + '\n')
+        print (medio('GANADORES','-_',96) + '\n')
+        print (medio(f'{', '.join(Ganador[1:-1])} y {Ganador[-1]}',' ',96) + '\n')
     else:
-        print (medio('GANADOR','-_',100)+'\n')
-        print (medio(f'{Ganador[1]}',' ',100) + '\n')
+        print (medio('GANADOR','-_',96)+'\n')
+        print (medio(f'{Ganador[1]}',' ',96) + '\n')
     print ('-_'*50)
 
 numero_cartas_mesa = 4
 numero_cartas_jugador = 3
 Rondas= list(range(1, int((40-numero_cartas_mesa)/(numero_cartas_jugador*numero_jugadores))+1))
 Mesa.repartir(numero_cartas_mesa)
-print ('*'*100)
-print (medio('EMPIEZA LA PARTIDA','-',100)+'\n')
+print ('*'*96)
+print (medio('EMPIEZA LA PARTIDA','-',96)+'\n')
 for ronda in Rondas:
     if ronda == Rondas[-1]:
         texto = 'RONDA FINAL'
     else:
         texto = f'RONDA {ronda}'
-    print ('\n' + medio(texto,'-',100) + '\n')
+    print ('\n' + medio(texto,'-',96) + '\n')
     for jugador in Orden:
         Jugadores[jugador].recibir(numero_cartas_jugador)
-    print ('- '*50)
+    print ('- '*48)
     for turno in range(numero_cartas_jugador):
         for jugador in Orden:
             print ('Cartas de la mesa: ',etiquetar(Mesa.cartas))
             print (f'Cartas {jugador}: ', etiquetar(Jugadores[jugador].mano))
             opcion_a_escoger(jugador)
-            print ('- '*50)
+            print ('- '*48)
             #if input('Continuar con la partida? [s/n]: ') == 'n':
                 #quit()
     if ronda == Rondas[-1]:
-        print (medio('FIN DE LA PARIDA','-',100)+'\n')
-        print ('*'*100)
+        print ('\n' + medio('FIN DE LA PARIDA','-',96))
+        print ('*'*96)
         for jugador in Orden:
             if Jugadores[jugador].ultimo:
                 print ('\n' + f'{jugador} ha sido el último en recoger cartas' + '\n')
                 Jugadores[jugador].recoger(Mesa.cartas)
-        print (medio('PUNTUACIÓN','-',100) + '\n')
+        print (medio('PUNTUACIÓN','-',96) + '\n')
         calcular_puntuacion()
