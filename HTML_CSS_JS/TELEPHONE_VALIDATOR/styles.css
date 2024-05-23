@@ -1,0 +1,112 @@
+body {
+    background-image: url(https://wallpaperaccess.com/full/367633.jpg);
+    background-repeat: no-repeat;
+    background-attachment:fixed;
+    background-size: cover;
+    background-position: 50%;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 97vh;
+    overflow: hidden;
+}
+
+.contenedor {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.588);
+    padding: 15px;
+    width: 600px;
+    min-width: 100px;
+    border-radius: 30px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    color: azure;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#aparezco {
+    display: None;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 600px;
+    border-radius: 20px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0);
+    padding:0;
+    color: azure;
+    text-align: center;
+    margin-top: 10px;
+}
+
+#aparezco div.emoji {
+    width:15px;
+}
+
+#emoji1 {
+    margin-left: 8px
+}
+
+#emoji2 {
+    margin-right: 15px
+}
+
+#results-div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.linia {
+    width: 100%;
+    display:flex;
+    justify-content: center;
+}
+
+#check-btn, #clear-btn {
+    width: 100px;
+    text-align: center;
+    border-radius: 30px;
+    background-color: rgba(0, 0, 0);
+    padding: 15px;
+    color: azure;
+    
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+#clear-btn {
+    margin-right: 10px;
+}
+
+#check-btn{
+    margin-left: 10px;
+}
+
+#check-btn:hover, #clear-btn:hover {
+    background-color: rgb(66, 66, 66);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+input[type="text"]{
+    width: 100%;
+    border-radius: 30px;
+    background-color: rgba(0, 0, 0);
+    padding: 15px;
+    color: azure;
+}

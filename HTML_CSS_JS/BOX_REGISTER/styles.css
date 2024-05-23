@@ -1,0 +1,123 @@
+body {
+    background-image: url(https://image.freepik.com/vector-gratis/icono-caja-registradora-silueta-negra-destacado-sobre-fondo-blanco-ilustracion-vectorial-serie-iconos-comerciales_422344-839.jpg);
+    background-repeat: no-repeat;
+    background-color: white;
+    background-attachment:fixed;
+    background-position-x: center;
+    background-size:92vh;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.cash, .price {
+    display: grid;
+    position: sticky;
+}
+
+.price {
+    margin-top: 2.7vh;
+    grid-template-rows: 15.3vh;
+    grid-template-columns: auto 26vh 29vh auto;
+}
+
+.cash {
+    margin-top: 13.3vh;
+    grid-template-rows: 9.5vh;
+    grid-template-columns: auto 28vh 26vh auto;
+}
+
+#cash {
+    grid-column: 2;
+    border: 2px solid #ccc;
+    font-size: 2.5vh;
+    color: #333;
+    outline: none;
+    transition: border-color 0.3s;
+    text-align: center;
+    text-overflow: ellipsis;
+}
+
+#cash:focus {
+    border-color: green;
+}
+
+#price {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+    height: 100%;
+    width: 100%;
+    place-items: center;
+    font-size: 3vh;
+    text-align: center;
+}
+
+#Avalaible_Purchase {
+    display: grid;
+    grid-template-columns: 1fr 13vh;
+    grid-template-rows: 1fr;
+    margin-left: auto;
+    margin-right: auto;
+    width: 56vh;
+    margin-top: 4.9vh;
+    height: 8.7vh;
+}
+
+#purchase-btn {
+    grid-column: 2;
+    font-size: 2vh;
+    transform: perspective(300px)rotateX(30deg) skewX(15deg);
+}
+
+#avalaible {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    width: 100%;
+    transform: perspective(300px)rotateX(30deg) skewX(-4deg);
+}
+
+.coinAvailable {
+    font-size: 1.4vh;
+    margin-top: 0.5vh;
+    text-align: center;
+}
+
+#status_change_clear {
+    display: grid;
+    grid-template-columns: auto 1fr 10vh;
+    grid-template-rows: 1fr;
+    margin-left: auto;
+    margin-right: auto;
+    width: 64vh;
+    margin-top: 1.5vh;
+    height: 8.7vh;
+}
+
+#status {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    text-align: center;
+    transform: perspective(350px)rotateX(20deg) skewX(-20deg);
+    margin-left: 5px;
+    margin-top: 5px;
+    font-size: 2.3vh;
+}
+
+#clear-btn {
+    font-size: 2.2vh;
+    transform: perspective(300px)rotateX(16deg) skewX(18deg);
+}
+
+#change {
+    text-align: center;
+    transform: perspective(300px)rotateX(30deg);
+    margin-left: 1vh;
+}
+
+.coinChange {
+    font-size: 1.5vh;
+    margin-top: 0.5vh;
+    text-align: center;
+    transform: perspective(300px)rotateX(30deg);
+}

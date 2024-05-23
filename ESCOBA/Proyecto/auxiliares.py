@@ -1,7 +1,5 @@
 from itertools import combinations
 from math import factorial
-from mesa import Mesa
-from jugadores import Jugadores
 
 def combinaciones(lista):
     return [list(combinacion) for r in range(len(lista) + 1) for combinacion in combinations(lista, r)]

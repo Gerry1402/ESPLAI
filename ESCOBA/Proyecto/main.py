@@ -1,12 +1,14 @@
 import jugadores
 from auxiliares import combinaciones, binomio_newton, medio
-from mesa import Mesa
-from jugadores import Jugadores, Orden, numero_jugadores
-from baraja import etiquetar
+from mesa import tapiz
+from jugadores import Jugadores, Orden, numero_jugadores, Equipos
+from baraja import mazo, etiquetar
 
 def probabilidades (Persona, Siguiente, numero_mesa):
-    total=binomio_newton(40-len(Mesa.total),len(Jugadores[Siguiente].mano))
-    posible= binomio_newton(40-len(Mesa.total) - 4 + sum([1 for carta in Jugadores[Persona].conocidas if carta.valor == 15 - numero_mesa]),len(Jugadores[Siguiente].mano))
+    Conocidas = Equipos[Jugadores[Persona]].jugadores[Persona].conocidas if Equipos != {} else Jugadores[Persona].conocidas
+    Mano = Equipos[Jugadores[Siguiente]].jugadores[Siguiente].mano if Equipos != {} else Jugadores[Siguiente].mano
+    total=binomio_newton(40-len(Mesa.total),len(Mano))
+    posible= binomio_newton(40-len(Mesa.total) - 4 + sum([1 for carta in Conocidas if carta.valor == 15 - numero_mesa]),len(Mano))
     return (total-posible)/total
 
 def comprobar_velo(Persona):
@@ -17,15 +19,23 @@ def comprobar_velo(Persona):
             for carta in Jugadores[jugador].mano:
                 if carta.valor == 7 and carta.palo == 'Oro':
                     velo=False
+    return velo
 
 def comprobar_tirada(Persona):
-    Jugadores[Persona].conocidas= Mesa.total+Jugadores[Persona].mano
+    if Equipos != {}:
+        Equipos[Jugadores[Persona]].jugadores[Persona].conocidas = Mesa.total + Equipos[Jugadores[Persona]].jugadores[Persona].mano
+        Mano = Equipos[Jugadores[Persona]].jugadores[Persona].mano
+        for equipo in Equipos.keys():
+            Equipos[equipo].actualizar_puntuacion()
+    else:
+        Jugadores[Persona].conocidas = Mesa.total + Jugadores[Persona].mano
+        Mano = Jugadores[Persona].mano
     Opciones=[]
     for combinacion in combinaciones(Mesa.cartas):
         numeros_combinacion_mesa=sum([carta.valor for carta in combinacion])
         if numeros_combinacion_mesa>15:
             continue
-        Opciones += [combinacion+[carta] for carta in Jugadores[Persona].mano if carta.valor+numeros_combinacion_mesa == 15]
+        Opciones += [combinacion+[carta] for carta in Mano if carta.valor+numeros_combinacion_mesa == 15]
     return Opciones
 
 def calificar_opcion(Persona, opcion):
@@ -66,14 +76,24 @@ def escoger_opcion_recogida(Persona):
     oros = []
     cartas = []
      ## calcular si vale la pena ir a por algun punto ##
-    for jugador in Orden:
-        if jugador!= Persona:
-            sietes.append(Jugadores[jugador].sietes)
-            oros.append(Jugadores[jugador].oros) 
-            cartas.append(Jugadores[jugador].numero_cartas)
-    Sietes = 4 - sum(sietes) >= max(sietes) - Jugadores[Persona].sietes and Jugadores[Persona].sietes <= 2
-    Oros = 10 - sum(oros) >= max(oros) - Jugadores[Persona].oros and Jugadores[Persona].oros <= 5
-    Cartas = 40 - sum(cartas) >= max(cartas) - Jugadores[Persona].numero_cartas and Jugadores[Persona].numero_cartas <= 20
+    if Equipos != {}:
+        for equipo in Equipos:
+            if equipo != Equipos[Jugadores[Persona]].jugadores[Persona].equipo:
+                sietes.append(Equipos[equipo].sietes)
+                oros.append(Equipos[equipo].oros)
+                cartas.append(Equipos[equipo].numero_cartas)
+                Sietes = 4 - sum(sietes) >= max(sietes) - Equipos[equipo].sietes and Equipos[equipo].sietes <= 2
+                Oros = 10 - sum(oros) >= max(oros) - Equipos[equipo].oros and Equipos[equipo].oros <= 5
+                Cartas = 40 - sum(cartas) >= max(cartas) - Equipos[equipo].numero_cartas and Equipos[equipo].numero_cartas <= 20
+    else:
+        for jugador in Orden:
+            if jugador!= Persona:
+                sietes.append(Jugadores[jugador].sietes)
+                oros.append(Jugadores[jugador].oros) 
+                cartas.append(Jugadores[jugador].numero_cartas)
+                Sietes = 4 - sum(sietes) >= max(sietes) - Jugadores[Persona].sietes and Jugadores[Persona].sietes <= 2
+                Oros = 10 - sum(oros) >= max(oros) - Jugadores[Persona].oros and Jugadores[Persona].oros <= 5
+                Cartas = 40 - sum(cartas) >= max(cartas) - Jugadores[Persona].numero_cartas and Jugadores[Persona].numero_cartas <= 20
     opciones=comprobar_tirada(Persona)
     ## estab;ecida la prioridad, calcular la opcion mas rentable##
     for opcion in opciones:
@@ -134,7 +154,11 @@ def escoger_opcion_recogida(Persona):
 def dejar_carta_mesa(Persona):
     resumen = []
     opciones=[]
-    if len(Jugadores[Persona].mano) == 1:
+    if Equipos != {}:
+        Mano = Equipos[Jugadores[Persona]].jugadores[Persona].mano
+    else:
+        Mano = Jugadores[Persona].mano
+    if len(Mano) == 1:
         return 0
     ## Cualcular el siguiente jugador ##
     for index, persona in enumerate(Orden):
@@ -143,7 +167,7 @@ def dejar_carta_mesa(Persona):
                 if i == len(Orden):
                     i=0
     siguiente = Orden[i]
-    for index, carta in enumerate(Jugadores[Persona].mano):
+    for index, carta in enumerate(Mano):
         numeros_cartas_mesa = [carta.valor for carta in Mesa.cartas]
         if sum(numeros_cartas_mesa) + carta.valor == 4:
             return index
@@ -172,7 +196,7 @@ def dejar_carta_mesa(Persona):
     posibilidades_escoba = 1
     escoba=True
     if resumen == []:
-        for index, carta in enumerate(Jugadores[Persona].mano):
+        for index, carta in enumerate(Mano):
             if carta.palo != 'oro':
                 return index
     for index, opcion in enumerate(resumen):
@@ -186,34 +210,61 @@ def dejar_carta_mesa(Persona):
     return resultado
 
 def opcion_a_escoger (Persona):
-    if escoger_opcion_recogida(Persona) == None:
-        print (f'No hay opciones para {Persona}, se descartará {Jugadores[Persona].mano[dejar_carta_mesa(Persona)]}')
-        Jugadores[Persona].descartar(Jugadores[Persona].mano[dejar_carta_mesa(Persona)])
-        for jugadores in Orden:
-            if jugadores!= Persona:
-                Jugadores[jugadores].ultimo = False
-            else:
-                Jugadores[jugadores].ultimo = True
+    if Equipos != {}:
+        if escoger_opcion_recogida(Persona) == None:
+            print (f'No hay opciones para {Persona}, se descartará {Equipos[Jugadores[Persona]].jugadores[Persona].mano[dejar_carta_mesa(Persona)]}')
+            Equipos[Jugadores[Persona]].jugadores[Persona].descartar(Equipos[Jugadores[Persona]].jugadores[Persona].mano[dejar_carta_mesa(Persona)], Mesa)
+        else:
+            print (f'{Persona} escoge {etiquetar(escoger_opcion_recogida(Persona))}')
+            Equipos[Jugadores[Persona]].jugadores[Persona].recoger(escoger_opcion_recogida(Persona), Mesa)
+            for jugadores in Orden:
+                if jugadores!= Persona:
+                    Equipos[Jugadores[Persona]].jugadores[Persona].ultimo = False
+                else:
+                    Equipos[Jugadores[Persona]].jugadores[Persona].ultimo = True
     else:
-        print (f'{Persona} escoge {etiquetar(escoger_opcion_recogida(Persona))}')
-        Jugadores[Persona].recoger(escoger_opcion_recogida(Persona))
+        if escoger_opcion_recogida(Persona) == None:
+            print (f'No hay opciones para {Persona}, se descartará {Jugadores[Persona].mano[dejar_carta_mesa(Persona)]}')
+            Jugadores[Persona].descartar(Jugadores[Persona].mano[dejar_carta_mesa(Persona)], Mesa)
+            for jugadores in Orden:
+                if jugadores!= Persona:
+                    Jugadores[jugadores].ultimo = False
+                else:
+                    Jugadores[jugadores].ultimo = True
+        else:
+            print (f'{Persona} escoge {etiquetar(escoger_opcion_recogida(Persona))}')
+            Jugadores[Persona].recoger(escoger_opcion_recogida(Persona), Mesa)
 
 def empate_o_no_empate(tipo_puntos):  ## retorna [Valor_maximo, jugadores_con_valor_maximo]
     resultado = []
     puntos = {}
-    for jugador in Orden:
+    if Equipos != {}:
+        lista = list(Equipos.keys())
+    else:
+        lista = Orden
+    for ente in lista:
+        if Equipos != {}:
+            sietes = Equipos[ente].sietes
+            oros = Equipos[ente].oros
+            cartas = Equipos[ente].numero_cartas
+            contador = Equipos[ente].contador
+        else:
+            sietes = Jugadores[ente].sietes
+            oros = Jugadores[ente].oros
+            cartas = Jugadores[ente].numero_cartas
+            contador = Jugadores[ente].contador
         if 'setenta' in tipo_puntos:
-            puntos[jugador] = Jugadores[jugador].sietes
+            puntos[ente] = sietes
         elif 'oros' in tipo_puntos:
-            puntos[jugador] = Jugadores[jugador].oros
+            puntos[ente] = oros
         elif 'cartas' in tipo_puntos:
-            puntos[jugador] = Jugadores[jugador].numero_cartas
+            puntos[ente] = cartas
         elif 'contador' in tipo_puntos:
-            puntos[jugador] = Jugadores[jugador].contador
+            puntos[ente] = contador
     resultado = [max(puntos.values())]
-    for jugador in Orden:
-        if puntos[jugador] == max(puntos.values()):
-            resultado.append(jugador)
+    for ente in lista:
+        if puntos[ente] == max(puntos.values()):
+            resultado.append(ente)
     return resultado
 
 def calcular_puntuacion():
@@ -222,62 +273,88 @@ def calcular_puntuacion():
         tríada[tanto] = empate_o_no_empate(tanto)
     velo = ''
     frase = {'las setenta': 'sietes', 'los oros': 'oros', 'las cartas': 'cartas'}
-    for jugador in Orden:
-        if Jugadores[jugador].sietes == tríada['las setenta'][0] and len(tríada['las setenta']) == 2:
-            Jugadores[jugador].contador += 1
-        if Jugadores[jugador].oros == tríada['los oros'][0] and len(tríada['los oros']) == 2:
-            Jugadores[jugador].contador += 1
-        if Jugadores[jugador].numero_cartas == tríada['las cartas'][0] and len(tríada['las cartas']) == 2:
-            Jugadores[jugador].contador += 1
-        if Jugadores[jugador].velo:
-            Jugadores[jugador].contador += 1
-            velo = jugador
+    if Equipos != {}:
+        for equipo in Equipos.keys():
+            if Equipos[equipo].sietes == tríada['las setenta'][0] and len(tríada['las setenta']) == 2:
+                Equipos[equipo].contador += 1
+            if Equipos[equipo].oros == tríada['los oros'][0] and len(tríada['los oros']) == 2:
+                Equipos[equipo].contador += 1
+            if Equipos[equipo].numero_cartas == tríada['las cartas'][0] and len(tríada['las cartas']) == 2:
+                Equipos[equipo].contador += 1
+            if Equipos[equipo].velo:
+                Equipos[equipo].contador += 1
+                velo = equipo
+            Equipos[equipo].contador += Equipos[equipo].escobas
+        for jugador in Orden:
+            print (f'{jugador} ha realizado {Equipos[Jugadores[jugador]].jugadores[jugador].escobas} escobas')
+    else:
+        for jugador in Orden:
+            if Jugadores[jugador].sietes == tríada['las setenta'][0] and len(tríada['las setenta']) == 2:
+                Jugadores[jugador].contador += 1
+            if Jugadores[jugador].oros == tríada['los oros'][0] and len(tríada['los oros']) == 2:
+                Jugadores[jugador].contador += 1
+            if Jugadores[jugador].numero_cartas == tríada['las cartas'][0] and len(tríada['las cartas']) == 2:
+                Jugadores[jugador].contador += 1
+            if Jugadores[jugador].velo:
+                Jugadores[jugador].contador += 1
+                velo = jugador
         Jugadores[jugador].contador += Jugadores[jugador].escobas
         print (f'{jugador} ha realizado {Jugadores[jugador].escobas} escobas')
-    Ganador = empate_o_no_empate('contador')
     for tanto in tríada:
         if len(tríada[tanto]) > 2:
             print ('\n' + f'{', '.join(tríada[tanto][1:-1])} y {tríada[tanto][-1]} han empatado en {tanto} con {tríada[tanto][0]} {frase[tanto]}')
         else:
-            print ('\n' + f'{tríada[tanto][1]} ha ganado {tanto}')
-    print ('\n' + f'{velo} ha ganado el velo' + '\n')
-    if len(Ganador) > 2:
-        print (medio('GANADORES','-_',96) + '\n')
-        print (medio(f'{', '.join(Ganador[1:-1])} y {Ganador[-1]}',' ',96) + '\n')
-    else:
-        print (medio('GANADOR','-_',96)+'\n')
-        print (medio(f'{Ganador[1]}',' ',96) + '\n')
-    print ('-_'*50)
+            print ('\n' + f'{tríada[tanto][1]} han ganado {tanto} con {tríada[tanto][0]} {frase[tanto]}') if Equipos != {} else print ('\n' + f'{tríada[tanto][1]} ha ganado {tanto} con {tríada[tanto][0]} {frase[tanto]}')
+    print ('\n' + f'{velo} han ganado el velo' + '\n') if Equipos != {} else print ('\n' + f'{velo} ha ganado el velo' + '\n')
 
 numero_cartas_mesa = 4
 numero_cartas_jugador = 3
 Rondas= list(range(1, int((40-numero_cartas_mesa)/(numero_cartas_jugador*numero_jugadores))+1))
-Mesa.repartir(numero_cartas_mesa)
-print ('*'*96)
-print (medio('EMPIEZA LA PARTIDA','-',96)+'\n')
-for ronda in Rondas:
-    if ronda == Rondas[-1]:
-        texto = 'RONDA FINAL'
-    else:
-        texto = f'RONDA {ronda}'
-    print ('\n' + medio(texto,'-',96) + '\n')
-    for jugador in Orden:
-        Jugadores[jugador].recibir(numero_cartas_jugador)
-    print ('- '*48)
-    for turno in range(numero_cartas_jugador):
+meta = 31
+
+while meta:
+    n = 1
+    Baraja = mazo()
+    Baraja.mezclar()
+    Mesa = tapiz()
+    Mesa.repartir(numero_cartas_mesa, Baraja)
+    print ('\n')
+    print ('*'*96)
+    print (medio(f'PARTIDA {n}','-',96)+'\n')
+    for ronda in Rondas:
+        if ronda == Rondas[-1]:
+            texto = 'RONDA FINAL'
+        else:
+            texto = f'RONDA {ronda}'
+        print ('\n' + medio(texto,'-',96) + '\n')
         for jugador in Orden:
-            print ('Cartas de la mesa: ',etiquetar(Mesa.cartas))
-            print (f'Cartas {jugador}: ', etiquetar(Jugadores[jugador].mano))
-            opcion_a_escoger(jugador)
-            print ('- '*48)
-            #if input('Continuar con la partida? [s/n]: ') == 'n':
-                #quit()
-    if ronda == Rondas[-1]:
-        print ('\n' + medio('FIN DE LA PARIDA','-',96))
-        print ('*'*96)
-        for jugador in Orden:
-            if Jugadores[jugador].ultimo:
-                print ('\n' + f'{jugador} ha sido el último en recoger cartas' + '\n')
-                Jugadores[jugador].recoger(Mesa.cartas)
-        print (medio('PUNTUACIÓN','-',96) + '\n')
-        calcular_puntuacion()
+            Equipos[Jugadores[jugador]].jugadores[jugador].recibir(numero_cartas_jugador, Baraja, Mesa) if Equipos != {} else Jugadores[jugador].recibir(numero_cartas_jugador, Baraja, Mesa)
+        print ('- '*48)
+        for turno in range(numero_cartas_jugador):
+            for jugador in Orden:
+                print ('Cartas de la mesa: ',etiquetar(Mesa.cartas))
+                print (f'Cartas {jugador}: ', etiquetar(Equipos[Jugadores[jugador]].jugadores[jugador].mano if Equipos != {} else Jugadores[jugador].mano))
+                opcion_a_escoger(jugador)
+                print ('- '*48)
+                #if input('Continuar con la partida? [s/n]: ') == 'n':
+                    #quit()
+        if ronda == Rondas[-1]:
+            print ('\n' + medio(f'FINAL PARIDA {n}','-',96))
+            print ('*'*96)
+            for jugador in Orden:
+                if Equipos != {}:
+                    if Equipos[Jugadores[jugador]].jugadores[jugador].ultimo:
+                        Equipos[Jugadores[jugador]].jugadores[jugador].recoger(Mesa.cartas, Mesa)
+                        print ('\n' + f'{jugador} ha sido el último en recoger cartas' + '\n')
+                else:
+                    if Jugadores[jugador].ultimo:
+                        Jugadores[jugador].recoger(Mesa.cartas, Mesa)
+                        print ('\n' + f'{jugador} ha sido el último en recoger cartas' + '\n')
+            print (medio('PUNTUACIÓN','-',96) + '\n')
+            calcular_puntuacion()
+            for jugador in Orden:
+                if Equipos != {}:
+                    Equipos[Jugadores[jugador]].jugadores[jugador].cero()
+                else:
+                    Jugadores[jugador].cero()
+    n += 1

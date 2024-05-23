@@ -20,9 +20,7 @@ class mazo:
 
 def etiquetar(cartas):
     if isinstance(cartas, list):
-        return ', '.join([str(carta) for carta in cartas])
-    else:
-        return str(cartas)
+        return f'{', '.join([str(carta) for carta in cartas][:-1])} y {[str(carta) for carta in cartas][-1]}' if len(cartas) > 1 else str(cartas[0]) if len(cartas) == 1 else ''
 
 Baraja=mazo()
 Baraja.mezclar()

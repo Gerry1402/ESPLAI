@@ -55,7 +55,7 @@ p {
     grid-template-columns: 50% 50%;
 }
   
-  .top {
+.top {
     transform: rotateX(90deg) translateZ(50px);
     grid-template-columns: 33% 33% 33%;
     grid-template-rows: 33% 33% 33%;
@@ -66,8 +66,8 @@ p {
     grid-template-columns: 50% 50%;
 }
   
-  @keyframes spin {
-    to {
-        transform: rotateY(360deg) rotateZ(720deg);
-    }
-  }  
+@keyframes spin {
+to {
+    transform: rotateY(360deg) rotateZ(720deg);
+}
+}  
